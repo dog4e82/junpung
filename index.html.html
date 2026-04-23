@@ -1,0 +1,1970 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Python 코드 해설집 — 1차고사 대비</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #f8f8f7;
+    --surface: #ffffff;
+    --border: #e8e7e4;
+    --border-light: #f0efec;
+    --text: #1a1918;
+    --text-muted: #6b6966;
+    --text-dim: #9b9895;
+    --accent: oklch(55% 0.15 255);
+    --accent-bg: oklch(97% 0.03 255);
+    --accent-border: oklch(88% 0.07 255);
+    --green: oklch(52% 0.14 155);
+    --green-bg: oklch(97% 0.03 155);
+    --orange: oklch(62% 0.14 55);
+    --orange-bg: oklch(97% 0.03 55);
+    --purple: oklch(55% 0.14 300);
+    --purple-bg: oklch(97% 0.03 300);
+    --red: oklch(55% 0.16 25);
+    --red-bg: oklch(97% 0.03 25);
+    --sidebar-w: 260px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Noto Sans KR', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    display: flex;
+    min-height: 100vh;
+    font-size: 15px;
+    line-height: 1.7;
+  }
+
+  /* SIDEBAR */
+  #sidebar {
+    width: var(--sidebar-w);
+    min-height: 100vh;
+    background: var(--surface);
+    border-right: 1px solid var(--border);
+    position: fixed;
+    top: 0; left: 0;
+    display: flex;
+    flex-direction: column;
+    z-index: 100;
+    overflow-y: auto;
+  }
+
+  .sidebar-header {
+    padding: 24px 20px 16px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .sidebar-header h1 {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--text);
+    letter-spacing: -0.01em;
+  }
+
+  .sidebar-header p {
+    font-size: 12px;
+    color: var(--text-dim);
+    margin-top: 3px;
+  }
+
+  .sidebar-section-title {
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    color: var(--text-dim);
+    padding: 16px 20px 6px;
+    text-transform: uppercase;
+  }
+
+  .sidebar-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 7px 20px;
+    cursor: pointer;
+    border-radius: 0;
+    transition: background 0.12s;
+    text-decoration: none;
+    color: var(--text-muted);
+    font-size: 13px;
+  }
+
+  .sidebar-item:hover { background: var(--bg); color: var(--text); }
+  .sidebar-item.active { background: var(--accent-bg); color: var(--accent); }
+
+  .sidebar-num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    font-weight: 600;
+    width: 24px;
+    text-align: right;
+    color: var(--text-dim);
+    flex-shrink: 0;
+  }
+
+  .sidebar-item.active .sidebar-num { color: var(--accent); }
+
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    font-size: 9px;
+    font-weight: 600;
+    padding: 1px 5px;
+    border-radius: 3px;
+    margin-left: auto;
+    flex-shrink: 0;
+  }
+
+  .badge-adv { background: oklch(94% 0.06 300); color: var(--purple); }
+  .badge-hard { background: oklch(94% 0.06 25); color: var(--red); }
+
+  /* MAIN */
+  #main {
+    margin-left: var(--sidebar-w);
+    flex: 1;
+    max-width: 900px;
+    padding: 48px 40px 120px;
+  }
+
+  .page-title {
+    margin-bottom: 40px;
+  }
+
+  .page-title h2 {
+    font-size: 26px;
+    font-weight: 700;
+    letter-spacing: -0.03em;
+    color: var(--text);
+  }
+
+  .page-title p {
+    font-size: 14px;
+    color: var(--text-muted);
+    margin-top: 6px;
+  }
+
+  /* PROBLEM CARD */
+  .problem {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    margin-bottom: 24px;
+    overflow: hidden;
+    scroll-margin-top: 24px;
+  }
+
+  .problem-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 16px 22px;
+    border-bottom: 1px solid var(--border-light);
+    cursor: pointer;
+    user-select: none;
+  }
+
+  .problem-num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text-dim);
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 3px 8px;
+    flex-shrink: 0;
+  }
+
+  .problem-title {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text);
+    flex: 1;
+  }
+
+  .problem-tags {
+    display: flex;
+    gap: 5px;
+    flex-wrap: wrap;
+  }
+
+  .tag {
+    font-size: 10px;
+    font-weight: 500;
+    padding: 2px 7px;
+    border-radius: 4px;
+    background: var(--border-light);
+    color: var(--text-muted);
+  }
+
+  .tag-loop { background: var(--green-bg); color: var(--green); }
+  .tag-list { background: var(--accent-bg); color: var(--accent); }
+  .tag-adv { background: var(--purple-bg); color: var(--purple); }
+  .tag-func { background: var(--orange-bg); color: var(--orange); }
+
+  .chevron {
+    font-size: 12px;
+    color: var(--text-dim);
+    transition: transform 0.2s;
+    margin-left: 8px;
+  }
+
+  .problem.closed .chevron { transform: rotate(-90deg); }
+  .problem.closed .problem-body { display: none; }
+
+  .problem-body { padding: 0; }
+
+  /* CODE BLOCK */
+  .code-block {
+    background: #1c1b1a;
+    padding: 18px 22px;
+    overflow-x: auto;
+    border-bottom: 1px solid var(--border-light);
+  }
+
+  .code-block pre {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    line-height: 1.75;
+    color: #d4d0cc;
+    white-space: pre;
+  }
+
+  /* Syntax highlighting */
+  .kw { color: #c792ea; } /* keyword */
+  .fn { color: #82aaff; } /* function */
+  .st { color: #c3e88d; } /* string */
+  .nm { color: #f78c6c; } /* number */
+  .cm { color: #546e7a; font-style: italic; } /* comment */
+  .op { color: #89ddff; } /* operator/punctuation */
+  .bi { color: #ffcb6b; } /* builtin */
+  .var { color: #eeffff; } /* variable */
+  .fstr { color: #c3e88d; }
+  .fvar { color: #f07178; }
+
+  /* OUTPUT */
+  .output-block {
+    padding: 14px 22px;
+    background: #f5f4f1;
+    border-bottom: 1px solid var(--border-light);
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  .output-label {
+    font-size: 10px;
+    font-weight: 700;
+    color: var(--text-dim);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin-top: 1px;
+    flex-shrink: 0;
+    padding-top: 1px;
+  }
+
+  .output-value {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    color: #2d6a2d;
+    background: none;
+    white-space: pre-wrap;
+    flex: 1;
+  }
+
+  /* EXPLANATION */
+  .explanation {
+    padding: 20px 22px;
+  }
+
+  .step-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 12px;
+  }
+
+  .step {
+    display: flex;
+    gap: 14px;
+    align-items: flex-start;
+  }
+
+  .step-num {
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    background: var(--border);
+    color: var(--text-muted);
+    font-size: 11px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    margin-top: 2px;
+    font-family: 'JetBrains Mono', monospace;
+  }
+
+  .step-content {
+    flex: 1;
+    font-size: 14px;
+    color: var(--text);
+    line-height: 1.7;
+  }
+
+  .step-content code {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    background: var(--border-light);
+    border: 1px solid var(--border);
+    padding: 1px 5px;
+    border-radius: 4px;
+    color: var(--text);
+  }
+
+  /* ADVANCED CONCEPT BOX */
+  .concept-box {
+    margin: 16px 0 0;
+    border-radius: 8px;
+    overflow: hidden;
+  }
+
+  .concept-box.blue { border: 1px solid var(--accent-border); }
+  .concept-box.purple { border: 1px solid oklch(82% 0.1 300); }
+  .concept-box.orange { border: 1px solid oklch(82% 0.1 55); }
+  .concept-box.green { border: 1px solid oklch(82% 0.1 155); }
+  .concept-box.red { border: 1px solid oklch(82% 0.1 25); }
+
+  .concept-header {
+    padding: 10px 16px;
+    font-size: 12px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    gap: 7px;
+  }
+
+  .concept-box.blue .concept-header { background: var(--accent-bg); color: var(--accent); }
+  .concept-box.purple .concept-header { background: var(--purple-bg); color: var(--purple); }
+  .concept-box.orange .concept-header { background: var(--orange-bg); color: var(--orange); }
+  .concept-box.green .concept-header { background: var(--green-bg); color: var(--green); }
+  .concept-box.red .concept-header { background: var(--red-bg); color: var(--red); }
+
+  .concept-body {
+    padding: 14px 16px;
+    font-size: 13.5px;
+    line-height: 1.75;
+    color: var(--text);
+    background: var(--surface);
+  }
+
+  .concept-body code {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    padding: 1px 5px;
+    border-radius: 4px;
+  }
+
+  .mini-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+    font-size: 13px;
+  }
+
+  .mini-table th {
+    background: var(--bg);
+    padding: 6px 12px;
+    text-align: left;
+    font-weight: 600;
+    font-size: 12px;
+    border: 1px solid var(--border);
+    color: var(--text-muted);
+  }
+
+  .mini-table td {
+    padding: 6px 12px;
+    border: 1px solid var(--border);
+  }
+
+  .mini-table td code {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11.5px;
+    background: none;
+    border: none;
+    padding: 0;
+  }
+
+  .trace-box {
+    background: #1c1b1a;
+    border-radius: 6px;
+    padding: 12px 16px;
+    margin-top: 10px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    color: #d4d0cc;
+    line-height: 1.8;
+    overflow-x: auto;
+  }
+
+  .trace-box .arrow { color: #89ddff; }
+  .trace-box .val { color: #c3e88d; }
+  .trace-box .comment { color: #546e7a; }
+
+  .divider {
+    height: 1px;
+    background: var(--border-light);
+    margin: 16px 0;
+  }
+
+  .explain-section-title {
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--text-dim);
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+
+  /* PROGRESS BAR at top */
+  .top-bar {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: 10px 40px;
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    margin-left: var(--sidebar-w);
+    font-size: 13px;
+    color: var(--text-muted);
+  }
+
+  .top-bar-fixed {
+    position: fixed;
+    top: 0;
+    left: var(--sidebar-w);
+    right: 0;
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: 10px 40px;
+    z-index: 50;
+    font-size: 13px;
+    color: var(--text-muted);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .progress-track {
+    flex: 1;
+    height: 3px;
+    background: var(--border);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+
+  .progress-fill {
+    height: 100%;
+    background: var(--accent);
+    border-radius: 2px;
+    transition: width 0.3s;
+  }
+
+  /* Scrollbar */
+  #sidebar::-webkit-scrollbar { width: 4px; }
+  #sidebar::-webkit-scrollbar-track { background: transparent; }
+  #sidebar::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+
+  .highlight-line {
+    background: rgba(130,170,255,0.08);
+    display: block;
+    margin: 0 -22px;
+    padding: 0 22px;
+  }
+
+  .inline-note {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 12px;
+    background: #fff3cd;
+    border: 1px solid #ffd97d;
+    color: #7a5c00;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-family: 'Noto Sans KR', sans-serif;
+    font-weight: 500;
+  }
+
+  /* IMPORTANT banner */
+  .banner {
+    background: var(--accent-bg);
+    border: 1px solid var(--accent-border);
+    border-radius: 8px;
+    padding: 14px 18px;
+    font-size: 14px;
+    color: var(--text);
+    margin-bottom: 28px;
+    line-height: 1.7;
+  }
+
+  .banner strong { color: var(--accent); }
+</style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<nav id="sidebar">
+  <div class="sidebar-header">
+    <h1>Python 코드 해설집</h1>
+    <p>1차고사 대비 · 전체 32문항</p>
+  </div>
+
+  <div class="sidebar-section-title">기초 반복문</div>
+  <a href="#p01" class="sidebar-item"><span class="sidebar-num">01</span> for + continue</a>
+  <a href="#p02" class="sidebar-item"><span class="sidebar-num">02</span> 제너레이터 + 언패킹 <span class="badge badge-adv">고급</span></a>
+  <a href="#p03" class="sidebar-item"><span class="sidebar-num">03</span> while + break</a>
+
+  <div class="sidebar-section-title">한줄 코딩</div>
+  <a href="#p04" class="sidebar-item"><span class="sidebar-num">04</span> 소수 개수 세기 <span class="badge badge-hard">심화</span></a>
+  <a href="#p05" class="sidebar-item"><span class="sidebar-num">05</span> 윤년 개수 세기</a>
+  <a href="#p06" class="sidebar-item"><span class="sidebar-num">06</span> map + lambda <span class="badge badge-adv">고급</span></a>
+  <a href="#p07" class="sidebar-item"><span class="sidebar-num">07</span> zip + 언패킹 <span class="badge badge-adv">고급</span></a>
+  <a href="#p08" class="sidebar-item"><span class="sidebar-num">08</span> f-string 컴프리헨션</a>
+
+  <div class="sidebar-section-title">리스트 조작</div>
+  <a href="#p10" class="sidebar-item"><span class="sidebar-num">10</span> *zip + map <span class="badge badge-adv">고급</span></a>
+  <a href="#p11" class="sidebar-item"><span class="sidebar-num">11</span> append + continue</a>
+  <a href="#p12" class="sidebar-item"><span class="sidebar-num">12</span> for-else <span class="badge badge-adv">고급</span></a>
+  <a href="#p13" class="sidebar-item"><span class="sidebar-num">13</span> 리스트 컴프리헨션</a>
+  <a href="#p14" class="sidebar-item"><span class="sidebar-num">14</span> f-string 포맷</a>
+  <a href="#p15" class="sidebar-item"><span class="sidebar-num">15</span> filter + lambda</a>
+  <a href="#p16" class="sidebar-item"><span class="sidebar-num">16</span> set 차집합</a>
+  <a href="#p17" class="sidebar-item"><span class="sidebar-num">17</span> set in list</a>
+
+  <div class="sidebar-section-title">내장함수 & 문자열</div>
+  <a href="#p18" class="sidebar-item"><span class="sidebar-num">18</span> any / all</a>
+  <a href="#p19" class="sidebar-item"><span class="sidebar-num">19</span> pop + 슬라이싱 <span class="badge badge-adv">고급</span></a>
+
+  <div class="sidebar-section-title">암호화 코드 이해</div>
+  <a href="#p20" class="sidebar-item"><span class="sidebar-num">20</span> 암호화 (encrypt)</a>
+  <a href="#p21" class="sidebar-item"><span class="sidebar-num">21</span> 복호화 (decrypt)</a>
+  <a href="#p22" class="sidebar-item"><span class="sidebar-num">22</span> 복호화 응용</a>
+
+  <div class="sidebar-section-title">응용 문제</div>
+  <a href="#p23" class="sidebar-item"><span class="sidebar-num">23</span> 구구단 한줄 <span class="badge badge-hard">심화</span></a>
+  <a href="#p24" class="sidebar-item"><span class="sidebar-num">24</span> 리스트 합치기</a>
+  <a href="#p25" class="sidebar-item"><span class="sidebar-num">25</span> pop 활용</a>
+  <a href="#p26" class="sidebar-item"><span class="sidebar-num">26</span> remove 활용</a>
+  <a href="#p27" class="sidebar-item"><span class="sidebar-num">27</span> remove + pop</a>
+  <a href="#p28" class="sidebar-item"><span class="sidebar-num">28</span> enumerate</a>
+  <a href="#p29" class="sidebar-item"><span class="sidebar-num">29</span> while 인덱스 계산 <span class="badge badge-hard">심화</span></a>
+  <a href="#p30" class="sidebar-item"><span class="sidebar-num">30</span> enumerate + break</a>
+  <a href="#p31" class="sidebar-item"><span class="sidebar-num">31</span> while + continue</a>
+  <a href="#p32" class="sidebar-item"><span class="sidebar-num">32</span> 클래스 기초</a>
+</nav>
+
+<!-- TOP PROGRESS BAR -->
+<div class="top-bar-fixed">
+  <span>📖 스크롤 진행도</span>
+  <div class="progress-track"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
+  <span id="progressText" style="font-family:'JetBrains Mono',monospace;font-size:12px;">0%</span>
+</div>
+
+<!-- MAIN CONTENT -->
+<main id="main" style="padding-top: 80px;">
+  <div class="page-title">
+    <h2>Python 코드 해설집</h2>
+    <p>1차고사를 준비하는 손코딩 · 파이썬 기초부터 고급 문법까지</p>
+  </div>
+
+  <div class="banner">
+    💡 <strong>이 해설집 사용법:</strong> 각 문제를 클릭하면 펼치고 접을 수 있어요. <strong>보라색 박스</strong>는 고급 개념, <strong>파란색 박스</strong>는 핵심 설명입니다. 코드를 먼저 혼자 분석해본 뒤 해설을 확인하는 것을 추천합니다.
+  </div>
+
+  <!-- ===== #01 ===== -->
+  <div class="problem" id="p01">
+    <div class="problem-header" onclick="toggle(this)">
+      <span class="problem-num">#01</span>
+      <span class="problem-title">for 반복문 + continue — 특정 인덱스만 출력</span>
+      <div class="problem-tags"><span class="tag tag-loop">for</span><span class="tag tag-loop">continue</span></div>
+      <span class="chevron">▾</span>
+    </div>
+    <div class="problem-body">
+      <div class="code-block"><pre><span class="cm"># 01</span>
+<span class="var">star</span> <span class="op">=</span> [<span class="st">'A'</span>, <span class="st">'B'</span>, <span class="st">'C'</span>, <span class="st">'D'</span>, <span class="st">'E'</span>]
+<span class="kw">for</span> <span class="var">i</span> <span class="kw">in</span> <span class="bi">range</span>(<span class="nm">5</span>):
+    <span class="kw">if</span> <span class="var">i</span> <span class="op">!=</span> <span class="nm">3</span>:
+        <span class="kw">continue</span>
+    <span class="bi">print</span>(<span class="var">star</span>[<span class="var">i</span>])</pre></div>
+      <div class="output-block">
+        <span class="output-label">출력</span>
+        <span class="output-value">D</span>
+      </div>
+      <div class="explanation">
+        <p class="explain-section-title">단계별 실행 흐름</p>
+        <div class="step-list">
+          <div class="step"><div class="step-num">1</div><div class="step-content"><code>star</code>는 5개짜리 리스트. 인덱스는 0~4, 값은 A~E.</div></div>
+          <div class="step"><div class="step-num">2</div><div class="step-content"><code>range(5)</code>는 0,1,2,3,4 순서로 <code>i</code>에 넣음.</div></div>
+          <div class="step"><div class="step-num">3</div><div class="step-content"><code>i != 3</code>이면 <code>continue</code> → 즉시 다음 반복으로 건너뜀. <code>print</code>는 실행 안 됨.</div></div>
+          <div class="step"><div class="step-num">4</div><div class="step-content"><code>i == 3</code>일 때만 조건이 False이므로 <code>continue</code>를 건너뛰고 <code>print(star[3])</code> 실행 → <strong>D</strong></div></div>
+        </div>
+        <div class="concept-box blue" style="margin-top:14px;">
+          <div class="concept-header">💡 continue 란?</div>
+          <div class="concept-body">반복문 안에서 <code>continue</code>를 만나면 아래 코드를 <strong>건너뛰고</strong> 즉시 다음 반복으로 이동합니다.<br>
+          <code>break</code>가 반복문을 <strong>완전히 종료</strong>하는 것과 다릅니다.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== #02 ===== -->
+  <div class="problem" id="p02">
+    <div class="problem-header" onclick="toggle(this)">
+      <span class="problem-num">#02</span>
+      <span class="problem-title">print(*) 언패킹 + 제너레이터 표현식</span>
+      <div class="problem-tags"><span class="tag tag-adv">언패킹</span><span class="tag tag-adv">제너레이터</span></div>
+      <span class="chevron">▾</span>
+    </div>
+    <div class="problem-body">
+      <div class="code-block"><pre><span class="cm"># 02</span>
+<span class="var">star</span> <span class="op">=</span> [<span class="st">'① A'</span>, <span class="st">'② B'</span>, <span class="st">'③ C'</span>, <span class="st">'④ D'</span>, <span class="st">'⑤ E'</span>]
+<span class="bi">print</span>(<span class="op">*</span>(<span class="var">x</span> <span class="kw">for</span> <span class="var">x</span> <span class="kw">in</span> <span class="var">star</span> <span class="kw">if</span> <span class="var">x</span>[<span class="nm">0</span>] <span class="kw">not in</span> <span class="st">'①②④⑤'</span>))</pre></div>
+      <div class="output-block">
+        <span class="output-label">출력</span>
+        <span class="output-value">③ C</span>
+      </div>
+      <div class="explanation">
+        <p class="explain-section-title">단계별 실행 흐름</p>
+        <div class="step-list">
+          <div class="step"><div class="step-num">1</div><div class="step-content">각 원소의 <code>x[0]</code>는 첫 글자를 의미. 예: <code>'③ C'[0]</code> → <code>'③'</code></div></div>
+          <div class="step"><div class="step-num">2</div><div class="step-content">필터 조건: <code>x[0] not in '①②④⑤'</code> — 첫 글자가 저 4개에 <strong>없으면</strong> 통과.</div></div>
+          <div class="step"><div class="step-num">3</div><div class="step-content"><code>'③'</code>는 <code>'①②④⑤'</code>에 없으므로 <code>'③ C'</code>만 통과 → 제너레이터는 <code>'③ C'</code> 하나만 생성.</div></div>
+          <div class="step"><div class="step-num">4</div><div class="step-content"><code>print(*...)</code>의 <code>*</code>가 제너레이터를 <strong>풀어서</strong> 출력 → <strong>③ C</strong></div></div>
+        </div>
+        <div class="concept-box purple">
+          <div class="concept-header">⚡ 언패킹(Unpacking) — print(*iterable)</div>
+          <div class="concept-body">
+            <code>*</code>는 리스트나 이터러블을 <strong>낱개로 풀어</strong>주는 연산자입니다.<br><br>
+            <div class="trace-box">
+a <span class="arrow">=</span> [<span class="val">1</span>, <span class="val">2</span>, <span class="val">3</span>]
+print(a)    <span class="comment"># → [1, 2, 3]   (리스트 그대로)</span>
+print(*a)   <span class="comment"># → 1 2 3       (개별 인자로 풀려서 전달)</span>
+            </div>
+            즉 <code>print(*a)</code>는 <code>print(1, 2, 3)</code>과 완전히 동일합니다.
+          </div>
+        </div>
+        <div class="concept-box blue" style="margin-top:10px;">
+          <div class="concept-header">💡 제너레이터 표현식 vs 리스트 컴프리헨션</div>
+          <div class="concept-body">
+            <code>[x for x in ...]</code> → 대괄호: <strong>리스트</strong> 즉시 생성<br>
+            <code>(x for x in ...)</code> → 괄호: <strong>제너레이터</strong>, 필요할 때만 값 생산 (메모리 효율적)
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== #03 ===== -->
+  <div class="problem" id="p03">
+    <div class="problem-header" onclick="toggle(this)">
+      <span class="problem-num">#03</span>
+      <span class="problem-title">while 반복문 + break — 조건 만족 시 탈출</span>
+      <div class="problem-tags"><span class="tag tag-loop">while</span><span class="tag tag-loop">break</span></div>
+      <span class="chevron">▾</span>
+    </div>
+    <div class="problem-body">
+      <div class="code-block"><pre><span class="cm"># 03</span>
+<span class="var">star</span> <span class="op">=</span> [<span class="st">'A'</span>, <span class="st">'B'</span>, <span class="st">'C'</span>, <span class="st">'D'</span>, <span class="st">'E'</span>]
+<span class="var">i</span> <span class="op">=</span> <span class="nm">0</span>
+<span class="kw">while</span> <span class="var">i</span> <span class="op">&lt;</span> <span class="nm">5</span>:
+    <span class="kw">if</span> <span class="var">i</span> <span class="op">==</span> <span class="nm">3</span>:
+        <span class="bi">print</span>(<span class="var">star</span>[<span class="var">i</span>])
+        <span class="kw">break</span>
+    <span class="var">i</span> <span class="op">+=</span> <span class="nm">1</span></pre></div>
+      <div class="output-block">
+        <span class="output-label">출력</span>
+        <span class="output-value">D</span>
+      </div>
+      <div class="explanation">
+        <div class="trace-box">
+i=0: 0==3? No → i+=1 → i=1
+i=1: 1==3? No → i+=1 → i=2
+i=2: 2==3? No → i+=1 → i=3
+i=3: 3==3? <span class="val">Yes</span> → print(star[3]) → <span class="val">"D"</span> → break (반복 종료)
+        </div>
+        <div class="concept-box blue" style="margin-top:14px;">
+          <div class="concept-header">💡 #01 vs #03 비교</div>
+          <div class="concept-body">
+            두 코드는 결과가 동일하게 <strong>D</strong>를 출력합니다. 방식이 다를 뿐:<br><br>
+            • <strong>#01 (for + continue)</strong>: 모든 i(0~4)를 순회하되, i≠3이면 건너뜀<br>
+            • <strong>#03 (while + break)</strong>: i==3을 찾으면 출력 후 즉시 탈출
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== #04 ===== -->
+  <div class="problem" id="p04">
+    <div class="problem-header" onclick="toggle(this)">
+      <span class="problem-num">#04</span>
+      <span class="problem-title">소수(prime) 개수 세기 — 한줄 심화 코드</span>
+      <div class="problem-tags"><span class="tag tag-adv">한줄코딩</span><span class="tag tag-adv">all()</span><span class="tag tag-func">수학</span></div>
+      <span class="chevron">▾</span>
+    </div>
+    <div class="problem-body">
+      <div class="code-block"><pre><span class="cm"># 04</span>
+<span class="bi">sum</span>(<span class="bi">all</span>(<span class="var">i</span><span class="op">%</span><span class="var">j</span> <span class="kw">for</span> <span class="var">j</span> <span class="kw">in</span> <span class="bi">range</span>(<span class="nm">2</span>,<span class="bi">int</span>(<span class="var">i</span><span class="op">**</span><span class="nm">.5</span>)<span class="op">+</span><span class="nm">1</span>))<span class="kw">for</span> <span class="var">i</span> <span class="kw">in</span> <span class="bi">range</span>(<span class="nm">3</span>,<span class="nm">10</span><span class="op">**</span><span class="nm">6</span>,<span class="nm">2</span>))<span class="op">+</span><span class="nm">1</span></pre></div>
+      <div class="output-block">
+        <span class="output-label">출력</span>
+        <span class="output-value">78498  (100만 이하 소수의 개수)</span>
+      </div>
+      <div class="explanation">
+        <p class="explain-section-title">분해해서 이해하기</p>
+        <p style="font-size:14px; color:var(--text-muted); margin-bottom:12px;">이 코드를 풀어 쓰면 아래와 같습니다:</p>
+        <div class="trace-box">
+count = 1  <span class="comment"># 2 (짝수 소수) 미리 포함</span>
+<span class="kw">for</span> i <span class="kw">in</span> range(3, 10**6, 2):  <span class="comment"># 홀수만 (3,5,7,9...)</span>
+    is_prime = <span class="val">True</span>
+    <span class="kw">for</span> j <span class="kw">in</span> range(2, int(i**0.5)+1):
+        <span class="kw">if</span> i % j == 0:   <span class="comment"># 나누어지면 소수 아님</span>
+            is_prime = <span class="val">False</span>
+            <span class="kw">break</span>
+    <span class="kw">if</span> is_prime:
+        count += 1
+        </div>
+        <div class="concept-box purple" style="margin-top:14px;">
+          <div class="concept-header">⚡ 핵심 테크닉 3가지</div>
+          <div class="concept-body">
+            <strong>① i**0.5 = √i 로 검사 범위 줄이기</strong><br>
+            어떤 수 i가 소수가 아니라면 √i 이하의 약수가 반드시 존재합니다. 그래서 2~√i 범위만 검사해도 충분합니다.<br><br>
+            <strong>② i%j 가 bool처럼 사용되는 원리</strong><br>
+            <code>i%j</code>가 <code>0</code>이면 <strong>False</strong> (j로 나누어짐 = 소수 아님)<br>
+            <code>i%j</code>가 <code>1,2,...</code>이면 <strong>True</strong> (나누어지지 않음)<br><br>
+            <strong>③ all() — 모두 True여야 소수</strong><br>
+            <code>all(i%j for j in ...)</code> = "모든 j에 대해 i%j ≠ 0" = "아무도 i를 나누지 못함" = 소수!<br><br>
+            <strong>④ sum(bool, ...) 로 카운팅</strong><br>
+            <code>sum([True, False, True])</code> = <code>2</code> (True=1, False=0)
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== #05 ===== -->
+  <div class="problem" id="p05">
+    <div class="problem-header" onclick="toggle(this)">
+      <span class="problem-num">#05</span>
+      <span class="problem-title">윤년 개수 세기 — 리스트 컴프리헨션</span>
+      <div class="problem-tags"><span class="tag tag-list">리스트컴프리헨션</span><span class="tag">조건문</span></div>
+      <span class="chevron">▾</span>
+    </div>
+    <div class="problem-body">
+      <div class="code-block"><pre><span class="cm"># 05</span>
+<span class="bi">len</span>([<span class="var">y</span> <span class="kw">for</span> <span class="var">y</span> <span class="kw">in</span> <span class="bi">range</span>(<span class="nm">2000</span>, <span class="nm">2100</span>) <span class="kw">if</span> ((<span class="var">y</span><span class="op">%</span><span class="nm">4</span><span class="op">==</span><span class="nm">0</span>)<span class="kw">and</span>(<span class="var">y</span><span class="op">%</span><span class="nm">100</span><span class="op">!=</span><span class="nm">0</span>))<span class="kw">or</span>(<span class="var">y</span><span class="op">%</span><span class="nm">400</span><span class="op">==</span><span class="nm">0</span>)])</pre></div>
+      <div class="output-block">
+        <span class="output-label">출력</span>
+        <span class="output-value">25</span>
+      </div>
+      <div class="explanation">
+        <div class="step-list">
+          <div class="step"><div class="step-num">1</div><div class="step-content">윤년 조건: <strong>(4의 배수 AND 100의 배수 아님) OR 400의 배수</strong></div></div>
+          <div class="step"><div class="step-num">2</div><div class="step-content">2000~2099 중 4의 배수: 2000,2004,...,2096 → 25개<br>이 중 100의 배수: 2100은 범위 밖, 2000은 400의 배수라 별도 조건에서 처리</div></div>
+          <div class="step"><div class="step-num">3</div><div class="step-content">결과: 25개 (2000년 포함)</div></div>
+        </div>
+        <div class="concept-box blue" style="margin-top:14px;">
+          <div class="concept-header">💡 윤년 규칙</div>
+          <div class="concept-body">
+            <table class="mini-table">
+              <tr><th>조건</th><th>예시</th><th>윤년?</th></tr>
+              <tr><td>4의 배수 + 100의 배수 아님</td><td>2024</td><td>✅ 윤년</td></tr>
+              <tr><td>100의 배수지만 400의 배수 아님</td><td>1900</td><td>❌ 아님</td></tr>
+              <tr><td>400의 배수</td><td>2000</td><td>✅ 윤년</td></tr>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== #06 ===== -->
+  <div class="problem" id="p06">
+    <div class="problem-header" onclick="toggle(this)">
+      <span class="problem-num">#06</span>
+      <span class="problem-title">map + lambda — 두 문자열 병렬 처리</span>
+      <div class="problem-tags"><span class="tag tag-func">lambda</span><span class="tag tag-func">map</span></div>
+      <span class="chevron">▾</span>
+    </div>
+    <div class="problem-body">
+      <div class="code-block"><pre><span class="cm">#06</span>
+<span class="bi">list</span>(<span class="bi">map</span>(<span class="kw">lambda</span> <span class="var">a</span>, <span class="var">b</span>: <span class="var">a</span> <span class="op">+</span> <span class="var">b</span>, <span class="st">'celebrity'</span>, <span class="st">'12345'</span>))</pre></div>
+      <div class="output-block">
+        <span class="output-label">출력</span>
+        <span class="output-value">['c1', 'e2', 'l3', 'e4', 'b5']</span>
+      </div>
+      <div class="explanation">
+        <div class="trace-box">
+<span class="comment"># 'celebrity'와 '12345'를 앞에서부터 하나씩 짝지어 처리</span>
+lambda('c', '1') <span class="arrow">→</span> <span class="val">'c'+'1'</span> = <span class="val">'c1'</span>
+lambda('e', '2') <span class="arrow">→</span> <span class="val">'e'+'2'</span> = <span class="val">'e2'</span>
+lambda('l', '3') <span class="arrow">→</span> <span class="val">'l'+'3'</span> = <span class="val">'l3'</span>
+lambda('e', '4') <span class="arrow">→</span> <span class="val">'e'+'4'</span> = <span class="val">'e4'</span>
+lambda('b', '5') <span class="arrow">→</span> <span class="val">'b'+'5'</span> = <span class="val">'b5'</span>
+<span class="comment"># 더 짧은 '12345'가 끝나면 멈춤</span>
+        </div>
+        <div class="concept-box purple" style="margin-top:14px;">
+          <div class="concept-header">⚡ lambda (람다) 함수</div>
+          <div class="concept-body">
+            <code>lambda 매개변수: 반환값</code> — 이름 없는 <strong>1회용 함수</strong>입니다.<br><br>
+            <div class="trace-box">
+<span class="comment"># 일반 함수로 쓰면:</span>
+def add(a, b):
+    return a + b
+
+<span class="comment"># lambda로 쓰면:</span>
+<span class="kw">lambda</span> a, b: a + b   <span class="comment"># 완전히 동일!</span>
+            </div>
+          </div>
+        </div>
+        <div class="concept-box orange" style="margin-top:10px;">
+          <div class="concept-header">⚡ map(함수, 이터러블)</div>
+          <div class="concept-body">
+            이터러블의 각 원소에 함수를 적용합니다. 결과는 <strong>map 객체</strong>이므로 <code>list()</code>로 변환 필요.<br>
+            인자가 2개인 함수를 쓸 때는 <code>map(함수, 이터러블1, 이터러블2)</code> 처럼 두 개 넘기면 됩니다.
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== #07 ===== -->
+  <div class="problem" id="p07">
+    <div class="problem-header" onclick="toggle(this)">
+      <span class="problem-num">#07</span>
+      <span class="problem-title">zip + 튜플 언패킹 — 두 문자열 묶기</span>
+      <div class="problem-tags"><span class="tag tag-adv">zip</span><span class="tag tag-adv">튜플언패킹</span></div>
+      <span class="chevron">▾</span>
+    </div>
+    <div class="problem-body">
+      <div class="code-block"><pre><span class="cm"># 07</span>
+[(<span class="var">a</span>, <span class="var">b</span>) <span class="kw">for</span> <span class="var">a</span>, <span class="var">b</span> <span class="kw">in</span> <span class="bi">zip</span>(<span class="st">'spring'</span>, <span class="st">'45678'</span>)]</pre></div>
+      <div class="output-block">
+        <span class="output-label">출력</span>
+        <span class="output-value">[('s','4'), ('p','5'), ('r','6'), ('i','7'), ('n','8')]</span>
+      </div>
+      <div class="explanation">
+        <div class="trace-box">
+zip('spring','45678') <span class="arrow">→</span>
+  ('s','4'), ('p','5'), ('r','6'), ('i','7'), ('n','8')
+<span class="comment"># 'spring'이 6글자, '45678'이 5글자 → 짧은 쪽(5)에서 멈춤</span>
+        </div>
+        <div class="concept-box purple" style="margin-top:14px;">
+          <div class="concept-header">⚡ 튜플 언패킹 (for a, b in ...)</div>
+          <div class="concept-body">
+            <code>zip</code>은 튜플을 만들어냅니다: <code>('s', '4')</code><br>
+            <code>for a, b in zip(...)</code>에서 <code>a, b</code>가 튜플을 자동으로 분해합니다.<br><br>
+            <div class="trace-box">
+<span class="comment"># 이것과 완전히 동일:</span>
+for item in zip('spring','45678'):
+    a = item[0]
+    b = item[1]
+    <span class="comment"># → (a, b)</span>
+            </div>
+            이처럼 여러 변수에 한 번에 값을 분배하는 것을 <strong>언패킹(unpacking)</strong>이라 합니다.
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== #08 ===== -->
+  <div class="problem" id="p08">
+    <div class="problem-header" onclick="toggle(this)">
+      <span class="problem-num">#08</span>
+      <span class="problem-title">f-string + 리스트 컴프리헨션</span>
+      <div class="problem-tags"><span class="tag tag-list">f-string</span><span class="tag tag-list">컴프리헨션</span></div>
+      <span class="chevron">▾</span>
+    </div>
+    <div class="problem-body">
+      <div class="code-block"><pre><span class="cm">#08</span>
+[<span class="fstr">f"</span><span class="fvar">{'Summer'[i]}</span><span class="fstr">♥</span><span class="fvar">{'Cat'[i]}</span><span class="fstr">"</span> <span class="kw">for</span> <span class="var">i</span> <span class="kw">in</span> <span class="bi">range</span>(<span class="nm">3</span>)]</pre></div>
+      <div class="output-block">
+        <span class="output-label">출력</span>
+        <span class="output-value">['S♥C', 'u♥a', 'm♥t']</span>
+      </div>
+      <div class="explanation">
+        <div class="trace-box">
+i=0: 'Summer'[0]='S', 'Cat'[0]='C' <span class="arrow">→</span> <span class="val">'S♥C'</span>
+i=1: 'Summer'[1]='u', 'Cat'[1]='a' <span class="arrow">→</span> <span class="val">'u♥a'</span>
+i=2: 'Summer'[2]='m', 'Cat'[2]='t' <span class="arrow">→</span> <span class="val">'m♥t'</span>
+        </div>
+        <div class="concept-box blue" style="margin-top:14px;">
+          <div class="concept-header">💡 문자열 인덱싱</div>
+          <div class="concept-body">
+            파이썬에서 문자열도 리스트처럼 인덱스로 접근 가능합니다.<br>
+            <code>'Summer'[0]</code> = <code>'S'</code>, <code>'Summer'[1]</code> = <code>'u'</code> ...
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== #10 ===== -->
+  <div class="problem" id="p10">
+    <div class="problem-header" onclick="toggle(this)">
+      <span class="problem-num">#10</span>
+      <span class="problem-title">[*zip(...)] — 스타 언패킹으로 zip 결과 리스트화</span>
+      <div class="problem-tags"><span class="tag tag-adv">* 언패킹</span><span class="tag tag-func">map</span></div>
+      <span class="chevron">▾</span>
+    </div>
+    <div class="problem-body">
+      <div class="code-block"><pre><span class="cm">#10</span>
+[<span class="op">*</span><span class="bi">zip</span>(<span class="st">'Good'</span>, <span class="bi">map</span>(<span class="bi">str</span>, <span class="st">'Morning'</span>))]</pre></div>
+      <div class="output-block">
+        <span class="output-label">출력</span>
+        <span class="output-value">[('G','M'), ('o','o'), ('o','r'), ('d','n')]</span>
+      </div>
+      <div class="explanation">
+        <div class="step-list">
+          <div class="step"><div class="step-num">1</div><div class="step-content"><code>map(str, 'Morning')</code>: 문자열 각 글자에 <code>str()</code>을 적용 → 각 글자를 그대로 문자열로. 결과는 <code>'M','o','r','n','i','n','g'</code></div></div>
+          <div class="step"><div class="step-num">2</div><div class="step-content"><code>zip('Good', ...)</code>: 짧은 쪽인 'Good'(4글자)에서 멈춤 → 4쌍의 튜플</div></div>
+          <div class="step"><div class="step-num">3</div><div class="step-content"><code>[*zip(...)]</code>: <code>*</code>로 zip 이터러블을 <strong>리스트 안에 풀어냄</strong></div></div>
+        </div>
+        <div class="concept-box purple" style="margin-top:14px;">
+          <div class="concept-header">⚡ [*이터러블] — 리스트 안 스타 언패킹</div>
+          <div class="concept-body">
+            <code>list(zip(...))</code>와 <code>[*zip(...)]</code>은 동일한 결과입니다.<br><br>
+            <div class="trace-box">
+list(range(3))  <span class="comment"># → [0, 1, 2]</span>
+[*range(3)]     <span class="comment"># → [0, 1, 2]  (같은 결과, 더 짧은 표현)</span>
+            </div>
+            <code>[*a, *b]</code> 처럼 여러 이터러블을 합칠 때도 사용합니다. (#24번 참고)
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== #11 ===== -->
+  <div class="problem" id="p11">
+    <div class="problem-header" onclick="toggle(this)">
+      <span class="problem-num">#11</span>
+      <span class="problem-title">append + continue — 리스트에 선택적으로 추가</span>
+      <div class="problem-tags"><span class="tag tag-loop">for</span><span class="tag tag-list">append</span></div>
+      <span class="chevron">▾</span>
+    </div>
+    <div class="problem-body">
+      <div class="code-block"><pre><span class="cm">#11</span>
+<span class="var">a</span> <span class="op">=</span> []
+<span class="kw">for</span> <span class="var">i</span> <span class="kw">in</span> <span class="bi">range</span>(<span class="nm">1</span>, <span class="nm">7</span>):
+    <span class="kw">if</span> <span class="var">i</span> <span class="op">==</span> <span class="nm">5</span>:
+        <span class="kw">continue</span>
+    <span class="var">a</span>.<span class="fn">append</span>(<span class="var">i</span>)
+<span class="bi">print</span>(<span class="var">a</span>)</pre></div>
+      <div class="output-block">
+        <span class="output-label">출력</span>
+        <span class="output-value">[1, 2, 3, 4, 6]</span>
+      </div>
+      <div class="explanation">
+        <div class="trace-box">
+i=1: 1==5? No → append(1) → a=[1]
+i=2: 2==5? No → append(2) → a=[1,2]
+i=3: 3==5? No → append(3) → a=[1,2,3]
+i=4: 4==5? No → append(4) → a=[1,2,3,4]
+i=5: 5==5? <span class="val">Yes</span> → continue (append 건너뜀)
+i=6: 6==5? No → append(6) → a=[1,2,3,4,6]
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== #12 ===== -->
+  <div class="problem" id="p12">
+    <div class="problem-header" onclick="toggle(this)">
+      <span class="problem-num">#12</span>
+      <span class="problem-title">for-else 구문 — break 없이 완주하면 else 실행</span>
+      <div class="problem-tags"><span class="tag tag-adv">for-else</span><span class="tag tag-list">sort</span></div>
+      <span class="chevron">▾</span>
+    </div>
+    <div class="problem-body">
+      <div class="code-block"><pre><span class="cm">#12</span>
+<span class="var">a</span> <span class="op">=</span> []
+<span class="kw">for</span> <span class="var">i</span> <span class="kw">in</span> <span class="bi">range</span>(<span class="nm">4</span>, <span class="nm">9</span>):
+    <span class="var">a</span>.<span class="fn">append</span>(<span class="var">i</span>)
+    <span class="kw">if</span> <span class="var">i</span> <span class="op">==</span> <span class="nm">9</span>:
+        <span class="kw">break</span>
+<span class="kw">else</span>:
+    <span class="var">a</span>.<span class="fn">sort</span>(<span class="var">reverse</span><span class="op">=</span><span class="kw">True</span>)
+    <span class="bi">print</span>(<span class="fstr">f'앞 </span><span class="fvar">{a}</span><span class="fstr">'</span>)
+    <span class="var">i</span> <span class="op">+=</span> <span class="nm">1</span>
+    <span class="bi">print</span>(<span class="var">i</span>)
+<span class="kw">if</span> <span class="var">i</span> <span class="op">&lt;</span> <span class="nm">6</span>:
+    <span class="bi">print</span>(<span class="fstr">f' 나중 </span><span class="fvar">{a}</span><span class="fstr">'</span>)</pre></div>
+      <div class="output-block">
+        <span class="output-label">출력</span>
+        <span class="output-value">앞 [8, 7, 6, 5, 4]
+9</span>
+      </div>
+      <div class="explanation">
+        <div class="step-list">
+          <div class="step"><div class="step-num">1</div><div class="step-content"><code>range(4,9)</code>는 4,5,6,7,8. → <code>a=[4,5,6,7,8]</code> 순서로 append</div></div>
+          <div class="step"><div class="step-num">2</div><div class="step-content"><code>if i == 9</code>: 반복 중 i는 4~8이므로 9가 되지 않음 → break 실행 안 됨</div></div>
+          <div class="step"><div class="step-num">3</div><div class="step-content">break 없이 for 완주 → <code>else</code> 블록 실행!</div></div>
+          <div class="step"><div class="step-num">4</div><div class="step-content"><code>a.sort(reverse=True)</code> → <code>[8,7,6,5,4]</code> 출력</div></div>
+          <div class="step"><div class="step-num">5</div><div class="step-content">마지막 i는 8, <code>i+=1</code> → i=9 출력</div></div>
+          <div class="step"><div class="step-num">6</div><div class="step-content"><code>if i < 6</code>: 9 &lt; 6은 False → 마지막 print 실행 안 됨</div></div>
+        </div>
+        <div class="concept-box purple" style="margin-top:14px;">
+          <div class="concept-header">⚡ for-else 구문 (파이썬 고유 문법!)</div>
+          <div class="concept-body">
+            <code>else</code>는 <strong>break 없이 for문을 완주했을 때만</strong> 실행됩니다.<br><br>
+            <div class="trace-box">
+for i in range(5):
+    if i == 3: break
+else:
+    print("완주!")   <span class="comment"># break 만났으므로 실행 안 됨</span>
+
+for i in range(5):
+    pass
+else:
+    print("완주!")   <span class="comment"># break 없으므로 실행됨 ✅</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== #13 ===== -->
+  <div class="problem" id="p13">
+    <div class="problem-header" onclick="toggle(this)">
+      <span class="problem-num">#13</span>
+      <span class="problem-title">리스트 컴프리헨션 — 조건 필터링</span>
+      <div class="problem-tags"><span class="tag tag-list">리스트컴프리헨션</span></div>
+      <span class="chevron">▾</span>
+    </div>
+    <div class="problem-body">
+      <div class="code-block"><pre><span class="cm">#13</span>
+[<span class="var">i</span> <span class="kw">for</span> <span class="var">i</span> <span class="kw">in</span> <span class="bi">range</span>(<span class="nm">1</span>, <span class="nm">7</span>) <span class="kw">if</span> <span class="var">i</span> <span class="op">!=</span> <span class="nm">5</span>]</pre></div>
+      <div class="output-block">
+        <span class="output-label">출력</span>
+        <span class="output-value">[1, 2, 3, 4, 6]</span>
+      </div>
+      <div class="explanation">
+        <p style="font-size:14px;">이 코드는 <strong>#11번</strong>과 완전히 같은 결과를 한 줄로 표현합니다.</p>
+        <div class="concept-box blue" style="margin-top:14px;">
+          <div class="concept-header">💡 리스트 컴프리헨션 구조</div>
+          <div class="concept-body">
+            <code>[표현식 for 변수 in 이터러블 if 조건]</code><br><br>
+            <table class="mini-table">
+              <tr><th>부분</th><th>의미</th></tr>
+              <tr><td><code>i</code> (앞)</td><td>리스트에 넣을 값</td></tr>
+              <tr><td><code>for i in range(1,7)</code></td><td>i가 1~6 순서로 순회</td></tr>
+              <tr><td><code>if i != 5</code></td><td>조건 만족할 때만 포함</td></tr>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== #14 ===== -->
+  <div class="problem" id="p14">
+    <div class="problem-header" onclick="toggle(this)">
+      <span class="problem-num">#14</span>
+      <span class="problem-title">f-string 소수점 포맷 — :.5f</span>
+      <div class="problem-tags"><span class="tag tag-list">f-string</span><span class="tag">포맷</span></div>
+      <span class="chevron">▾</span>
+    </div>
+    <div class="problem-body">
+      <div class="code-block"><pre><span class="cm">#14</span>
+<span class="var">score</span> <span class="op">=</span> <span class="nm">99.1243456789</span>
+<span class="bi">print</span>(<span class="fstr">f"1차고사 목표(score)는 </span><span class="fvar">{score:.5f}</span><span class="fstr">입니다."</span>)</pre></div>
+      <div class="output-block">
+        <span class="output-label">출력</span>
+        <span class="output-value">1차고사 목표(score)는 99.12435입니다.</span>
+      </div>
+      <div class="explanation">
+        <div class="concept-box blue">
+          <div class="concept-header">💡 f-string 포맷 형식</div>
+          <div class="concept-body">
+            <code>{변수:.Nf}</code> — 소수점 이하 N자리까지 표시 (반올림 적용)<br><br>
+            <table class="mini-table">
+              <tr><th>포맷</th><th>의미</th><th>결과</th></tr>
+              <tr><td><code>:.5f</code></td><td>소수점 5자리</td><td>99.12435</td></tr>
+              <tr><td><code>:.2f</code></td><td>소수점 2자리</td><td>99.12</td></tr>
+              <tr><td><code>:10d</code></td><td>정수, 10칸 우측정렬</td><td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;99</td></tr>
+              <tr><td><code>:>10</code></td><td>우측 정렬 10칸</td><td></td></tr>
+            </table>
+            <br>
+            <code>99.1243456789</code>를 소수점 5자리로: <strong>99.12434</strong>가 아닌 <strong>99.12435</strong> (6번째 자리 5에서 반올림)
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== #15 ===== -->
+  <div class="problem" id="p15">
+    <div class="problem-header" onclick="toggle(this)">
+      <span class="problem-num">#15</span>
+      <span class="problem-title">filter + lambda — 조건 필터링</span>
+      <div class="problem-tags"><span class="tag tag-func">filter</span><span class="tag tag-func">lambda</span></div>
+      <span class="chevron">▾</span>
+    </div>
+    <div class="problem-body">
+      <div class="code-block"><pre><span class="cm">#15</span>
+<span class="bi">list</span>(<span class="bi">filter</span>(<span class="kw">lambda</span> <span class="var">i</span>: <span class="var">i</span> <span class="op">!=</span> <span class="nm">5</span>, <span class="bi">range</span>(<span class="nm">1</span>, <span class="nm">7</span>)))</pre></div>
+      <div class="output-block">
+        <span class="output-label">출력</span>
+        <span class="output-value">[1, 2, 3, 4, 6]</span>
+      </div>
+      <div class="explanation">
+        <p style="font-size:14px;">#11, #13, #15, #16은 모두 <strong>같은 결과</strong>를 다른 방식으로 표현합니다.</p>
+        <div class="concept-box orange" style="margin-top:14px;">
+          <div class="concept-header">⚡ filter(함수, 이터러블)</div>
+          <div class="concept-body">
+            함수가 <strong>True를 반환하는 원소만</strong> 걸러냅니다.<br><br>
+            <div class="trace-box">
+filter(lambda i: i != 5, range(1,7))
+<span class="comment"># i=1: 1!=5 → True  ✅ 포함</span>
+<span class="comment"># i=5: 5!=5 → False ❌ 제외</span>
+<span class="comment"># i=6: 6!=5 → True  ✅ 포함</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== #16 ===== -->
+  <div class="problem" id="p16">
+    <div class="problem-header" onclick="toggle(this)">
+      <span class="problem-num">#16</span>
+      <span class="problem-title">set 차집합 — {5} 빼기</span>
+      <div class="problem-tags"><span class="tag">set</span><span class="tag">집합연산</span></div>
+      <span class="chevron">▾</span>
+    </div>
+    <div class="problem-body">
+      <div class="code-block"><pre><span class="cm">#16</span>
+<span class="bi">list</span>(<span class="bi">set</span>(<span class="bi">range</span>(<span class="nm">1</span>, <span class="nm">7</span>)) <span class="op">-</span> {<span class="nm">5</span>})</pre></div>
+      <div class="output-block">
+        <span class="output-label">출력</span>
+        <span class="output-value">[1, 2, 3, 4, 6]  ⚠️ 순서는 실행마다 다를 수 있음</span>
+      </div>
+      <div class="explanation">
+        <div class="concept-box blue">
+          <div class="concept-header">💡 set (집합) 연산</div>
+          <div class="concept-body">
+            <table class="mini-table">
+              <tr><th>연산</th><th>의미</th><th>예</th></tr>
+              <tr><td><code>A - B</code></td><td>차집합 (A에서 B 제거)</td><td><code>{1,2,3} - {2}</code> → <code>{1,3}</code></td></tr>
+              <tr><td><code>A | B</code></td><td>합집합</td><td></td></tr>
+              <tr><td><code>A & B</code></td><td>교집합</td><td></td></tr>
+            </table>
+            <br>⚠️ set은 <strong>순서가 없습니다</strong>. list()로 변환해도 순서가 보장되지 않으므로 주의!
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== #17 ===== -->
+  <div class="problem" id="p17">
+    <div class="problem-header" onclick="toggle(this)">
+      <span class="problem-num">#17</span>
+      <span class="problem-title">set을 리스트 안에 넣기 — list vs [set]</span>
+      <div class="problem-tags"><span class="tag">set</span><span class="tag">자료형</span></div>
+      <span class="chevron">▾</span>
+    </div>
+    <div class="problem-body">
+      <div class="code-block"><pre><span class="cm">#17</span>
+[<span class="bi">set</span>(<span class="bi">range</span>(<span class="nm">1</span>,<span class="nm">7</span>))<span class="op">-</span>{<span class="nm">5</span>}]</pre></div>
+      <div class="output-block">
+        <span class="output-label">출력</span>
+        <span class="output-value">[{1, 2, 3, 4, 6}]</span>
+      </div>
+      <div class="explanation">
+        <div class="concept-box red">
+          <div class="concept-header">🔴 #16 vs #17 핵심 차이!</div>
+          <div class="concept-body">
+            <table class="mini-table">
+              <tr><th>코드</th><th>결과</th><th>설명</th></tr>
+              <tr><td><code>list(set(...))</code></td><td><code>[1,2,3,4,6]</code></td><td>set을 <strong>리스트로 변환</strong></td></tr>
+              <tr><td><code>[set(...)]</code></td><td><code>[{1,2,3,4,6}]</code></td><td>set을 원소로 갖는 <strong>리스트</strong></td></tr>
+            </table>
+            <br>
+            <code>[set(...)]</code>은 set 자체가 리스트의 원소 한 개로 들어간 것입니다. 길이가 1인 리스트!
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== #18 ===== -->
+  <div class="problem" id="p18">
+    <div class="problem-header" onclick="toggle(this)">
+      <span class="problem-num">#18</span>
+      <span class="problem-title">any() / all() — 조건 일괄 검사</span>
+      <div class="problem-tags"><span class="tag tag-func">any</span><span class="tag tag-func">all</span></div>
+      <span class="chevron">▾</span>
+    </div>
+    <div class="problem-body">
+      <div class="code-block"><pre><span class="cm">#18</span>
+<span class="var">conditions</span> <span class="op">=</span> [<span class="kw">True</span>, <span class="kw">True</span>, <span class="kw">True</span>, <span class="kw">False</span>, <span class="kw">True</span>]
+
+<span class="kw">if</span> <span class="bi">any</span>(<span class="var">conditions</span>):
+    <span class="bi">print</span>(<span class="st">'Is it possible to induce mankind to live without war?'</span>)
+
+<span class="kw">if</span> <span class="bi">all</span>(<span class="var">conditions</span>):
+    <span class="bi">print</span>(<span class="st">'Courage is resistance...'</span>)
+<span class="kw">else</span>:
+    <span class="bi">print</span>(<span class="st">'In the middle of every difficulty lies opportunity.'</span>)</pre></div>
+      <div class="output-block">
+        <span class="output-label">출력</span>
+        <span class="output-value">Is it possible to induce mankind to live without war?
+In the middle of every difficulty lies opportunity.</span>
+      </div>
+      <div class="explanation">
+        <div class="step-list">
+          <div class="step"><div class="step-num">1</div><div class="step-content"><code>any(conditions)</code>: 하나라도 True? → True (4개가 True) → 첫 문장 출력</div></div>
+          <div class="step"><div class="step-num">2</div><div class="step-content"><code>all(conditions)</code>: 모두 True? → False (False가 하나 있음) → else 블록 출력</div></div>
+        </div>
+        <div class="concept-box green" style="margin-top:14px;">
+          <div class="concept-header">⚡ any vs all</div>
+          <div class="concept-body">
+            <table class="mini-table">
+              <tr><th>함수</th><th>의미</th><th>결과</th></tr>
+              <tr><td><code>any([T,T,F,T])</code></td><td>하나라도 True면 True</td><td>True</td></tr>
+              <tr><td><code>all([T,T,F,T])</code></td><td>모두 True여야 True</td><td>False</td></tr>
+              <tr><td><code>any([F,F,F])</code></td><td>모두 False면</td><td>False</td></tr>
+              <tr><td><code>all([T,T,T])</code></td><td>모두 True면</td><td>True</td></tr>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== #19 ===== -->
+  <div class="problem" id="p19">
+    <div class="problem-header" onclick="toggle(this)">
+      <span class="problem-num">#19</span>
+      <span class="problem-title">pop() + 슬라이싱 + print(*) — 역방향 추출</span>
+      <div class="problem-tags"><span class="tag tag-adv">슬라이싱</span><span class="tag tag-list">pop</span><span class="tag tag-adv">언패킹</span></div>
+      <span class="chevron">▾</span>
+    </div>
+    <div class="problem-body">
+      <div class="code-block"><pre><span class="cm">#19</span>
+<span class="var">celebrity</span> <span class="op">=</span> [
+    <span class="st">'아, 얼마나 좋을까요'</span>,
+    <span class="st">'그대란 행운이 온 걸까'</span>,
+    <span class="st">'지금 우리 함께 있다면'</span>,
+    <span class="st">'어떻게 나에게'</span>
+]
+
+<span class="var">iu</span> <span class="op">=</span> []
+<span class="kw">while</span> <span class="var">celebrity</span>:
+    <span class="var">iu</span>.<span class="fn">append</span>(<span class="var">celebrity</span>.<span class="fn">pop</span>())
+
+<span class="bi">print</span>(<span class="op">*</span><span class="var">iu</span>[<span class="nm">1</span>::<span class="nm">2</span>], <span class="var">sep</span><span class="op">=</span><span class="st">"\n"</span>)</pre></div>
+      <div class="output-block">
+        <span class="output-label">출력</span>
+        <span class="output-value">지금 우리 함께 있다면
+아, 얼마나 좋을까요</span>
+      </div>
+      <div class="explanation">
+        <div class="trace-box">
+<span class="comment"># pop()은 맨 뒤에서 꺼냄</span>
+celebrity.pop() <span class="arrow">→</span> <span class="val">'어떻게 나에게'</span>    iu=[<span class="val">'어떻게...'</span>]
+celebrity.pop() <span class="arrow">→</span> <span class="val">'지금 우리 함께 있다면'</span> iu=[<span class="val">'어떻게...','지금...'</span>]
+celebrity.pop() <span class="arrow">→</span> <span class="val">'그대란 행운이 온 걸까'</span> iu=[<span class="val">'어떻게...','지금...','그대란...'</span>]
+celebrity.pop() <span class="arrow">→</span> <span class="val">'아, 얼마나 좋을까요'</span>  iu=[<span class="val">'어떻게...','지금...','그대란...','아,...'</span>]
+
+iu[1::2] = iu[인덱스 1,3] = ['지금 우리 함께 있다면', '아, 얼마나 좋을까요']
+        </div>
+        <div class="concept-box purple" style="margin-top:14px;">
+          <div class="concept-header">⚡ 슬라이싱 [시작:끝:간격]</div>
+          <div class="concept-body">
+            <code>iu[1::2]</code>: 인덱스 1부터 시작, 끝까지, 2칸씩 건너뜀<br><br>
+            <table class="mini-table">
+              <tr><th>슬라이스</th><th>의미</th></tr>
+              <tr><td><code>[::2]</code></td><td>처음부터 2칸씩 (짝수 인덱스)</td></tr>
+              <tr><td><code>[1::2]</code></td><td>인덱스 1부터 2칸씩 (홀수 인덱스)</td></tr>
+              <tr><td><code>[::-1]</code></td><td>전체를 역순으로</td></tr>
+              <tr><td><code>[2:5]</code></td><td>인덱스 2,3,4</td></tr>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== #20 ===== -->
+  <div class="problem" id="p20">
+    <div class="problem-header" onclick="toggle(this)">
+      <span class="problem-num">#20</span>
+      <span class="problem-title">암호화 함수 (encrypt) — 시저 암호</span>
+      <div class="problem-tags"><span class="tag tag-func">함수</span><span class="tag tag-adv">zip</span><span class="tag">암호화</span></div>
+      <span class="chevron">▾</span>
+    </div>
+    <div class="problem-body">
+      <div class="code-block"><pre><span class="cm">#20</span>
+<span class="var">upper</span> <span class="op">=</span> <span class="st">"ABCDEFGHIJKLMNOPQRSTUVWXYZ"</span>
+<span class="var">lower</span> <span class="op">=</span> <span class="st">"abcdefghijklmnopqrstuvwxyz"</span>
+
+<span class="kw">def</span> <span class="fn">encrypt</span>(<span class="var">plain_text</span>, <span class="var">shifts</span>):
+    <span class="var">result</span> <span class="op">=</span> <span class="st">""</span>
+    <span class="kw">for</span> <span class="var">ch</span>, <span class="var">shift</span> <span class="kw">in</span> <span class="bi">zip</span>(<span class="var">plain_text</span>, <span class="var">shifts</span>):
+        <span class="kw">if</span> <span class="var">ch</span> <span class="kw">in</span> <span class="var">upper</span>:
+            <span class="var">idx</span> <span class="op">=</span> <span class="var">upper</span>.<span class="fn">index</span>(<span class="var">ch</span>)
+            <span class="var">result</span> <span class="op">+=</span> <span class="var">upper</span>[(<span class="var">idx</span> <span class="op">+</span> <span class="var">shift</span>) <span class="op">%</span> <span class="nm">26</span>]
+        <span class="kw">elif</span> <span class="var">ch</span> <span class="kw">in</span> <span class="var">lower</span>:
+            <span class="var">idx</span> <span class="op">=</span> <span class="var">lower</span>.<span class="fn">index</span>(<span class="var">ch</span>)
+            <span class="var">result</span> <span class="op">+=</span> <span class="var">lower</span>[(<span class="var">idx</span> <span class="op">+</span> <span class="var">shift</span>) <span class="op">%</span> <span class="nm">26</span>]
+        <span class="kw">else</span>:
+            <span class="var">result</span> <span class="op">+=</span> <span class="var">ch</span>
+    <span class="kw">return</span> <span class="var">result</span>
+
+<span class="var">plain</span> <span class="op">=</span> <span class="bi">input</span>(<span class="st">"평문 입력: "</span>)
+<span class="var">shift_input</span> <span class="op">=</span> <span class="bi">input</span>(<span class="st">"회전값 입력: "</span>)
+<span class="var">shifts</span> <span class="op">=</span> [<span class="bi">int</span>(<span class="var">s</span>) <span class="kw">for</span> <span class="var">s</span> <span class="kw">in</span> <span class="var">shift_input</span>]</pre></div>
+      <div class="output-block">
+        <span class="output-label">예시 (LoveMyself → 회전값 1234567890)</span>
+        <span class="output-value">MqyiRezmuf</span>
+      </div>
+      <div class="explanation">
+        <p class="explain-section-title">시저 암호 원리</p>
+        <div class="step-list">
+          <div class="step"><div class="step-num">1</div><div class="step-content">알파벳을 문자열로 저장. <code>upper.index('A')</code>=0, <code>upper.index('Z')</code>=25</div></div>
+          <div class="step"><div class="step-num">2</div><div class="step-content">각 글자 <code>ch</code>와 이동 수 <code>shift</code>를 zip으로 동시에 꺼냄 (튜플 언패킹)</div></div>
+          <div class="step"><div class="step-num">3</div><div class="step-content"><code>(idx + shift) % 26</code>: 26을 넘어가면 처음으로 돌아오는 <strong>순환 인덱싱</strong></div></div>
+        </div>
+        <div class="trace-box" style="margin-top:12px;">
+<span class="comment"># L 암호화, shift=1</span>
+upper.index('L') <span class="arrow">=</span> 11
+(11 + 1) % 26 = 12
+upper[12] <span class="arrow">=</span> <span class="val">'M'</span>  ✅
+
+<span class="comment"># Z를 shift=1로 암호화 (순환 예시)</span>
+upper.index('Z') <span class="arrow">=</span> 25
+(25 + 1) % 26 = 0
+upper[0] <span class="arrow">=</span> <span class="val">'A'</span>  ✅ Z+1 → A로 순환
+        </div>
+        <div class="concept-box blue" style="margin-top:12px;">
+          <div class="concept-header">💡 shifts = [int(s) for s in shift_input]</div>
+          <div class="concept-body">
+            <code>"1234"</code>라는 문자열을 입력하면 이것은 <code>'1','2','3','4'</code> 4글자입니다.<br>
+            리스트 컴프리헨션으로 각 글자를 <code>int()</code>로 변환 → <code>[1,2,3,4]</code>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== #21 ===== -->
+  <div class="problem" id="p21">
+    <div class="problem-header" onclick="toggle(this)">
+      <span class="problem-num">#21</span>
+      <span class="problem-title">복호화 함수 (decrypt) — 시저 암호 역변환</span>
+      <div class="problem-tags"><span class="tag tag-func">함수</span><span class="tag">복호화</span></div>
+      <span class="chevron">▾</span>
+    </div>
+    <div class="problem-body">
+      <div class="code-block"><pre><span class="cm">#21  암호문: MqyiRezmuf  회전값: 1234567890</span>
+<span class="kw">def</span> <span class="fn">decrypt</span>(<span class="var">cipher_text</span>, <span class="var">shifts</span>):
+    <span class="var">result</span> <span class="op">=</span> <span class="st">""</span>
+    <span class="kw">for</span> <span class="var">ch</span>, <span class="var">shift</span> <span class="kw">in</span> <span class="bi">zip</span>(<span class="var">cipher_text</span>, <span class="var">shifts</span>):
+        <span class="kw">if</span> <span class="var">ch</span> <span class="kw">in</span> <span class="var">upper</span>:
+            <span class="var">idx</span> <span class="op">=</span> <span class="var">upper</span>.<span class="fn">index</span>(<span class="var">ch</span>)
+            <span class="var">result</span> <span class="op">+=</span> <span class="var">upper</span>[(<span class="var">idx</span> <span class="op">-</span> <span class="var">shift</span>) <span class="op">%</span> <span class="nm">26</span>]  <span class="cm"># +가 아닌 -!</span>
+        <span class="kw">elif</span> <span class="var">ch</span> <span class="kw">in</span> <span class="var">lower</span>:
+            <span class="var">idx</span> <span class="op">=</span> <span class="var">lower</span>.<span class="fn">index</span>(<span class="var">ch</span>)
+            <span class="var">result</span> <span class="op">+=</span> <span class="var">lower</span>[(<span class="var">idx</span> <span class="op">-</span> <span class="var">shift</span>) <span class="op">%</span> <span class="nm">26</span>]
+        <span class="kw">else</span>:
+            <span class="var">result</span> <span class="op">+=</span> <span class="var">ch</span>
+    <span class="kw">return</span> <span class="var">result</span></pre></div>
+      <div class="output-block">
+        <span class="output-label">출력 (MqyiRezmuf, shifts=1234567890)</span>
+        <span class="output-value">LoveMyself</span>
+      </div>
+      <div class="explanation">
+        <div class="trace-box">
+M: upper, idx=12, (12-1)%26=11 <span class="arrow">→</span> <span class="val">L</span>
+q: lower, idx=16, (16-2)%26=14 <span class="arrow">→</span> <span class="val">o</span>
+y: lower, idx=24, (24-3)%26=21 <span class="arrow">→</span> <span class="val">v</span>
+i: lower, idx=8,  (8-4)%26=4   <span class="arrow">→</span> <span class="val">e</span>
+R: upper, idx=17, (17-5)%26=12 <span class="arrow">→</span> <span class="val">M</span>
+e: lower, idx=4,  (4-6)%26=24  <span class="arrow">→</span> <span class="val">y</span>  <span class="comment">← (-2)%26=24 파이썬에서 음수 mod는 양수!</span>
+z: lower, idx=25, (25-7)%26=18 <span class="arrow">→</span> <span class="val">s</span>
+m: lower, idx=12, (12-8)%26=4  <span class="arrow">→</span> <span class="val">e</span>
+u: lower, idx=20, (20-9)%26=11 <span class="arrow">→</span> <span class="val">l</span>
+f: lower, idx=5,  (5-0)%26=5   <span class="arrow">→</span> <span class="val">f</span>
+결과: <span class="val">LoveMyself</span>
+        </div>
+        <div class="concept-box red" style="margin-top:12px;">
+          <div class="concept-header">🔴 파이썬의 음수 나머지 — (-2)%26 = 24</div>
+          <div class="concept-body">
+            다른 언어와 달리 파이썬에서 <code>%</code>는 항상 <strong>양수</strong>를 반환합니다.<br>
+            <code>-2 % 26 = 24</code> (← 26-2=24)<br>
+            이 덕분에 알파벳 순환 처리가 자동으로 됩니다!
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== #22 ===== -->
+  <div class="problem" id="p22">
+    <div class="problem-header" onclick="toggle(this)">
+      <span class="problem-num">#22</span>
+      <span class="problem-title">복호화 응용 — dgoigxpbh → celebrity</span>
+      <div class="problem-tags"><span class="tag tag-func">함수</span><span class="tag">복호화</span></div>
+      <span class="chevron">▾</span>
+    </div>
+    <div class="problem-body">
+      <div class="code-block"><pre><span class="cm">#22  암호문: dgoigxpbh  회전값: 123456789</span>
+<span class="cm"># decrypt 함수는 #21과 동일</span></pre></div>
+      <div class="output-block">
+        <span class="output-label">출력 (dgoigxpbh, shifts=123456789)</span>
+        <span class="output-value">celebrity</span>
+      </div>
+      <div class="explanation">
+        <div class="trace-box">
+d: idx=3,  (3-1)%26=2  <span class="arrow">→</span> <span class="val">c</span>
+g: idx=6,  (6-2)%26=4  <span class="arrow">→</span> <span class="val">e</span>
+o: idx=14, (14-3)%26=11 <span class="arrow">→</span> <span class="val">l</span>
+i: idx=8,  (8-4)%26=4  <span class="arrow">→</span> <span class="val">e</span>
+g: idx=6,  (6-5)%26=1  <span class="arrow">→</span> <span class="val">b</span>
+x: idx=23, (23-6)%26=17 <span class="arrow">→</span> <span class="val">r</span>
+p: idx=15, (15-7)%26=8  <span class="arrow">→</span> <span class="val">i</span>
+b: idx=1,  (1-8)%26=19  <span class="arrow">→</span> <span class="val">t</span>
+h: idx=7,  (7-9)%26=24  <span class="arrow">→</span> <span class="val">y</span>
+결과: <span class="val">celebrity</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== #23 ===== -->
+  <div class="problem" id="p23">
+    <div class="problem-header" onclick="toggle(this)">
+      <span class="problem-num">#23</span>
+      <span class="problem-title">구구단 — 완전 한줄 코딩</span>
+      <div class="problem-tags"><span class="tag tag-adv">한줄코딩</span><span class="tag tag-adv">f-string</span><span class="tag tag-adv">언패킹</span></div>
+      <span class="chevron">▾</span>
+    </div>
+    <div class="problem-body">
+      <div class="code-block"><pre><span class="cm">#23</span>
+<span class="kw">for</span> <span class="var">i</span> <span class="kw">in</span> <span class="bi">range</span>(<span class="nm">1</span>,<span class="nm">10</span>):<span class="bi">print</span>(<span class="op">*</span>[<span class="fstr">f'</span><span class="fvar">{j}</span><span class="fstr">x</span><span class="fvar">{i}</span><span class="fstr">=</span><span class="fvar">{i*j:2}</span><span class="fstr">'</span><span class="kw">for</span> <span class="var">j</span> <span class="kw">in</span> <span class="bi">range</span>(<span class="nm">1</span>,<span class="nm">10</span>)])</pre></div>
+      <div class="output-block">
+        <span class="output-label">출력 (일부)</span>
+        <span class="output-value">1x1= 1 2x1= 2 3x1= 3 4x1= 4 5x1= 5 6x1= 6 7x1= 7 8x1= 8 9x1= 9
+1x2= 2 2x2= 4 ...
+...</span>
+      </div>
+      <div class="explanation">
+        <p class="explain-section-title">분해해서 이해하기</p>
+        <div class="trace-box">
+<span class="comment"># 안쪽 리스트 컴프리헨션 (j=단, i=행)</span>
+[f'{j}x{i}={i*j:2}' for j in range(1,10)]
+<span class="arrow">→</span> ['1x1= 1', '2x1= 2', ..., '9x1= 9']  (i=1일 때)
+
+<span class="comment"># print(*리스트) 로 공백 구분 출력</span>
+print(*['1x1= 1', '2x1= 2', ...])
+<span class="arrow">→</span> 1x1= 1 2x1= 2 3x1= 3 ...
+        </div>
+        <div class="concept-box purple" style="margin-top:14px;">
+          <div class="concept-header">⚡ f-string 정렬 포맷 {i*j:2}</div>
+          <div class="concept-body">
+            <code>{값:N}</code>: 최소 N칸 확보, 기본은 우측 정렬<br><br>
+            <code>{i*j:2}</code>: 결과를 최소 2칸에 표시<br>
+            <code> 1</code> (앞에 공백), <code> 9</code>, <code>10</code>, <code>81</code> — 이렇게 정렬이 맞춰집니다.
+          </div>
+        </div>
+        <div class="concept-box orange" style="margin-top:10px;">
+          <div class="concept-header">⚡ 한줄 코딩 팁 — 콜론(:) 뒤 코드</div>
+          <div class="concept-body">
+            파이썬에서 <code>for</code>, <code>if</code> 뒤에 콜론 바로 뒤에 한 줄 코드를 쓸 수 있습니다.<br>
+            <code>for i in range(3): print(i)</code> ← 줄바꿈 없이도 OK
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== #24 ===== -->
+  <div class="problem" id="p24">
+    <div class="problem-header" onclick="toggle(this)">
+      <span class="problem-num">#24</span>
+      <span class="problem-title">[*a, *b] — 리스트 언패킹으로 합치기</span>
+      <div class="problem-tags"><span class="tag tag-adv">* 언패킹</span></div>
+      <span class="chevron">▾</span>
+    </div>
+    <div class="problem-body">
+      <div class="code-block"><pre><span class="cm">#24</span>
+<span class="var">a</span> <span class="op">=</span> [<span class="nm">1</span>, <span class="nm">2</span>]
+<span class="var">b</span> <span class="op">=</span> [<span class="nm">3</span>, <span class="nm">4</span>]
+<span class="kw">if</span> <span class="var">a</span> <span class="kw">and</span> <span class="var">b</span>:
+    <span class="var">c</span> <span class="op">=</span> [<span class="op">*</span><span class="var">a</span>, <span class="op">*</span><span class="var">b</span>]
+    <span class="bi">print</span>(<span class="var">c</span>)</pre></div>
+      <div class="output-block">
+        <span class="output-label">출력</span>
+        <span class="output-value">[1, 2, 3, 4]</span>
+      </div>
+      <div class="explanation">
+        <div class="concept-box purple">
+          <div class="concept-header">⚡ [*a, *b] — 리스트 합치기의 여러 방법</div>
+          <div class="concept-body">
+            <div class="trace-box">
+a = [1, 2]; b = [3, 4]
+
+a + b          <span class="comment"># → [1,2,3,4]  (+ 연산자)</span>
+[*a, *b]       <span class="comment"># → [1,2,3,4]  (* 언패킹)</span>
+a.extend(b)    <span class="comment"># a를 [1,2,3,4]로 변경 (원본 수정)</span>
+            </div>
+            <br>
+            ✅ <code>if a and b:</code> — a와 b가 둘 다 비어 있지 않을 때만 실행. 빈 리스트 <code>[]</code>는 False!
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== #25 ===== -->
+  <div class="problem" id="p25">
+    <div class="problem-header" onclick="toggle(this)">
+      <span class="problem-num">#25</span>
+      <span class="problem-title">pop(인덱스) — 인덱스 기반 삭제</span>
+      <div class="problem-tags"><span class="tag tag-list">pop</span><span class="tag tag-adv">인덱스주의</span></div>
+      <span class="chevron">▾</span>
+    </div>
+    <div class="problem-body">
+      <div class="code-block"><pre><span class="cm">#25</span>
+<span class="var">exam</span><span class="op">=</span>[<span class="st">'가'</span>, <span class="st">'나'</span>, <span class="st">'다'</span>, <span class="st">'라'</span>, <span class="st">'마'</span>,<span class="st">'바'</span>]
+<span class="var">r</span><span class="op">=</span>[<span class="var">x</span>[<span class="nm">0</span>] <span class="kw">for</span> <span class="var">x</span> <span class="kw">in</span> <span class="var">exam</span>]; <span class="var">r</span>.<span class="fn">pop</span>(<span class="nm">1</span>); <span class="var">r</span>.<span class="fn">pop</span>(<span class="nm">2</span>)
+<span class="bi">print</span>(<span class="op">*</span><span class="var">r</span>, <span class="var">sep</span><span class="op">=</span><span class="st">', '</span>)</pre></div>
+      <div class="output-block">
+        <span class="output-label">출력</span>
+        <span class="output-value">가, 다, 마, 바</span>
+      </div>
+      <div class="explanation">
+        <div class="trace-box">
+r = ['가','나','다','라','마','바']  <span class="comment"># x[0]은 한글자라서 그냥 본인</span>
+
+r.pop(1) → '나' 삭제
+r = ['가','다','라','마','바']
+
+r.pop(2) → 현재 인덱스 2 = '라' 삭제  <span class="comment">⚠️ 삭제 후 인덱스 재조정!</span>
+r = ['가','다','마','바']
+        </div>
+        <div class="concept-box red" style="margin-top:12px;">
+          <div class="concept-header">🔴 pop 후 인덱스가 바뀐다!</div>
+          <div class="concept-body">
+            <code>pop(1)</code>으로 '나'를 삭제한 뒤 리스트가 재정렬됩니다.<br>
+            두 번째 <code>pop(2)</code>는 <strong>원래 '다'가 아닌 '라'</strong>를 가리킵니다.<br><br>
+            <table class="mini-table">
+              <tr><th>인덱스</th><th>pop(1) 전</th><th>pop(1) 후</th></tr>
+              <tr><td>0</td><td>가</td><td>가</td></tr>
+              <tr><td>1</td><td>나 ← 삭제</td><td>다</td></tr>
+              <tr><td>2</td><td>다</td><td>라 ← 다음 pop 대상</td></tr>
+              <tr><td>3</td><td>라</td><td>마</td></tr>
+              <tr><td>4</td><td>마</td><td>바</td></tr>
+              <tr><td>5</td><td>바</td><td></td></tr>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== #26 ===== -->
+  <div class="problem" id="p26">
+    <div class="problem-header" onclick="toggle(this)">
+      <span class="problem-num">#26</span>
+      <span class="problem-title">remove(값) — 값 기반 삭제</span>
+      <div class="problem-tags"><span class="tag tag-list">remove</span></div>
+      <span class="chevron">▾</span>
+    </div>
+    <div class="problem-body">
+      <div class="code-block"><pre><span class="cm">#26</span>
+<span class="var">exam</span><span class="op">=</span>[<span class="st">'가'</span>, <span class="st">'나'</span>, <span class="st">'다'</span>, <span class="st">'라'</span>, <span class="st">'마'</span>,<span class="st">'바'</span>]
+<span class="var">r</span><span class="op">=</span>[<span class="var">s</span>[<span class="nm">0</span>] <span class="kw">for</span> <span class="var">s</span> <span class="kw">in</span> <span class="var">exam</span>]; <span class="var">r</span>.<span class="fn">remove</span>(<span class="var">r</span>[<span class="nm">3</span>]); <span class="var">r</span>.<span class="fn">remove</span>(<span class="var">r</span>[<span class="nm">2</span>])
+<span class="bi">print</span>(<span class="op">*</span><span class="var">r</span>, <span class="var">sep</span><span class="op">=</span><span class="st">', '</span>)</pre></div>
+      <div class="output-block">
+        <span class="output-label">출력</span>
+        <span class="output-value">가, 나, 마, 바</span>
+      </div>
+      <div class="explanation">
+        <div class="trace-box">
+r = ['가','나','다','라','마','바']
+
+r.remove(r[3])  <span class="comment"># r[3]='라' → '라' 값을 삭제</span>
+r = ['가','나','다','마','바']
+
+r.remove(r[2])  <span class="comment"># r[2]='다' → '다' 값을 삭제</span>
+r = ['가','나','마','바']
+        </div>
+        <div class="concept-box blue" style="margin-top:12px;">
+          <div class="concept-header">💡 pop vs remove 차이</div>
+          <div class="concept-body">
+            <table class="mini-table">
+              <tr><th>메서드</th><th>인자</th><th>기준</th><th>반환값</th></tr>
+              <tr><td><code>pop(i)</code></td><td>인덱스</td><td>위치로 삭제</td><td>삭제된 값</td></tr>
+              <tr><td><code>remove(v)</code></td><td>값</td><td>값으로 삭제</td><td>None</td></tr>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== #27 ===== -->
+  <div class="problem" id="p27">
+    <div class="problem-header" onclick="toggle(this)">
+      <span class="problem-num">#27</span>
+      <span class="problem-title">remove + pop 혼합 사용</span>
+      <div class="problem-tags"><span class="tag tag-list">remove</span><span class="tag tag-list">pop</span></div>
+      <span class="chevron">▾</span>
+    </div>
+    <div class="problem-body">
+      <div class="code-block"><pre><span class="cm">#27</span>
+<span class="var">exam</span><span class="op">=</span>[<span class="st">'가'</span>, <span class="st">'나'</span>, <span class="st">'다'</span>, <span class="st">'라'</span>, <span class="st">'마'</span>,<span class="st">'바'</span>]
+<span class="var">r</span><span class="op">=</span>[<span class="var">s</span>[<span class="nm">0</span>] <span class="kw">for</span> <span class="var">s</span> <span class="kw">in</span> <span class="var">exam</span>]; <span class="var">r</span>.<span class="fn">remove</span>(<span class="var">r</span>[<span class="nm">2</span>]); <span class="var">r</span>.<span class="fn">pop</span>(<span class="nm">2</span>)
+<span class="bi">print</span>(<span class="op">*</span><span class="var">r</span>, <span class="var">sep</span><span class="op">=</span><span class="st">', '</span>)</pre></div>
+      <div class="output-block">
+        <span class="output-label">출력</span>
+        <span class="output-value">가, 나, 마, 바</span>
+      </div>
+      <div class="explanation">
+        <div class="trace-box">
+r = ['가','나','다','라','마','바']
+
+r.remove(r[2])  <span class="comment"># r[2]='다' 값 삭제</span>
+r = ['가','나','라','마','바']
+
+r.pop(2)  <span class="comment"># 인덱스 2='라' 삭제</span>
+r = ['가','나','마','바']
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== #28 ===== -->
+  <div class="problem" id="p28">
+    <div class="problem-header" onclick="toggle(this)">
+      <span class="problem-num">#28</span>
+      <span class="problem-title">enumerate + continue — 인덱스 기반 건너뛰기</span>
+      <div class="problem-tags"><span class="tag tag-adv">enumerate</span><span class="tag tag-loop">continue</span></div>
+      <span class="chevron">▾</span>
+    </div>
+    <div class="problem-body">
+      <div class="code-block"><pre><span class="cm">#28</span>
+<span class="var">exam</span>, <span class="var">r</span> <span class="op">=</span>[<span class="st">'가'</span>, <span class="st">'나'</span>, <span class="st">'다'</span>, <span class="st">'라'</span>, <span class="st">'마'</span>, <span class="st">'바'</span>], []
+<span class="kw">for</span> <span class="var">i</span>, <span class="var">s</span> <span class="kw">in</span> <span class="bi">enumerate</span>(<span class="var">exam</span>):
+    <span class="kw">if</span> <span class="var">i</span> <span class="op">==</span> <span class="nm">0</span> <span class="kw">or</span> <span class="var">i</span> <span class="op">==</span> <span class="nm">3</span>: <span class="kw">continue</span>
+    <span class="var">r</span>.<span class="fn">append</span>(<span class="var">s</span>)
+<span class="bi">print</span>(<span class="op">*</span><span class="var">r</span>, <span class="var">sep</span><span class="op">=</span><span class="st">', '</span>)</pre></div>
+      <div class="output-block">
+        <span class="output-label">출력</span>
+        <span class="output-value">나, 다, 마, 바</span>
+      </div>
+      <div class="explanation">
+        <div class="trace-box">
+enumerate(['가','나','다','라','마','바'])
+<span class="arrow">→</span> (0,'가'),(1,'나'),(2,'다'),(3,'라'),(4,'마'),(5,'바')
+
+i=0: continue (건너뜀)
+i=1: append('나') → r=['나']
+i=2: append('다') → r=['나','다']
+i=3: continue (건너뜀)
+i=4: append('마') → r=['나','다','마']
+i=5: append('바') → r=['나','다','마','바']
+        </div>
+        <div class="concept-box green" style="margin-top:12px;">
+          <div class="concept-header">⚡ enumerate(리스트)</div>
+          <div class="concept-body">
+            원소와 함께 인덱스도 같이 제공합니다.<br><br>
+            <div class="trace-box">
+for i, s in enumerate(['가','나','다']):
+    print(i, s)
+<span class="comment"># 출력: 0 가 / 1 나 / 2 다</span>
+            </div>
+            <code>for i, s in enumerate(...)</code>에서 <code>i, s</code>는 <strong>튜플 언패킹</strong>입니다.
+          </div>
+        </div>
+        <div class="concept-box blue" style="margin-top:10px;">
+          <div class="concept-header">💡 exam, r = [...], [] — 다중 대입</div>
+          <div class="concept-body">
+            파이썬에서 콤마(,)로 여러 변수에 동시에 값을 대입할 수 있습니다.<br>
+            <code>a, b = 1, 2</code> → a=1, b=2 ← 이것도 언패킹입니다!
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== #29 ===== -->
+  <div class="problem" id="p29">
+    <div class="problem-header" onclick="toggle(this)">
+      <span class="problem-num">#29</span>
+      <span class="problem-title">while + 조건부 인덱스 증가 — 심화 트레이싱</span>
+      <div class="problem-tags"><span class="tag tag-adv">한줄조건</span><span class="tag tag-loop">while</span></div>
+      <span class="chevron">▾</span>
+    </div>
+    <div class="problem-body">
+      <div class="code-block"><pre><span class="cm">#29</span>
+<span class="var">exam</span>, <span class="var">r</span>, <span class="var">i</span> <span class="op">=</span> [<span class="st">'가'</span>, <span class="st">'나'</span>, <span class="st">'다'</span>, <span class="st">'라'</span>, <span class="st">'마'</span>, <span class="st">'바'</span>], [], <span class="nm">0</span>
+<span class="kw">while</span> <span class="kw">True</span>:
+    <span class="var">r</span>.<span class="fn">append</span>(<span class="var">exam</span>[<span class="var">i</span>])
+    <span class="kw">if</span> <span class="bi">len</span>(<span class="var">r</span>) <span class="op">==</span> <span class="nm">3</span>: <span class="kw">break</span>
+    <span class="var">i</span> <span class="op">+=</span> <span class="nm">2</span> <span class="kw">if</span> <span class="var">i</span> <span class="op">&lt;</span> <span class="nm">1</span> <span class="kw">else</span> <span class="nm">3</span>
+<span class="bi">print</span>(<span class="op">*</span><span class="var">r</span>, <span class="var">sep</span><span class="op">=</span><span class="st">', '</span>)</pre></div>
+      <div class="output-block">
+        <span class="output-label">출력</span>
+        <span class="output-value">가, 다, 바</span>
+      </div>
+      <div class="explanation">
+        <div class="trace-box">
+i=0: append(exam[0])='가', len(r)=1≠3
+     i += 2 if 0<1 else 3  →  i < 1? Yes(0<1) → i+=2 → i=2
+
+i=2: append(exam[2])='다', len(r)=2≠3
+     i += 2 if 2<1 else 3  →  i < 1? No → i+=3 → i=5
+
+i=5: append(exam[5])='바', len(r)=3==3 → break
+
+결과: r=['가','다','바']
+        </div>
+        <div class="concept-box purple" style="margin-top:14px;">
+          <div class="concept-header">⚡ 삼항 연산자 (한줄 if-else)</div>
+          <div class="concept-body">
+            <code>값A if 조건 else 값B</code><br><br>
+            조건이 True이면 값A, False이면 값B를 반환합니다.<br><br>
+            <div class="trace-box">
+x = 10
+result = "양수" if x > 0 else "음수 또는 0"
+<span class="comment"># result = "양수"</span>
+
+i += 2 if i < 1 else 3
+<span class="comment"># i<1이면 2를 더하고, 아니면 3을 더함</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== #30 ===== -->
+  <div class="problem" id="p30">
+    <div class="problem-header" onclick="toggle(this)">
+      <span class="problem-num">#30</span>
+      <span class="problem-title">enumerate + break — 조건 만족 시 수집 중단</span>
+      <div class="problem-tags"><span class="tag tag-adv">enumerate</span><span class="tag tag-loop">break</span></div>
+      <span class="chevron">▾</span>
+    </div>
+    <div class="problem-body">
+      <div class="code-block"><pre><span class="cm">#30</span>
+<span class="var">exam</span>, <span class="var">r</span> <span class="op">=</span> [<span class="st">'가'</span>, <span class="st">'나'</span>, <span class="st">'다'</span>, <span class="st">'라'</span>, <span class="st">'마'</span>, <span class="st">'바'</span>], []
+<span class="kw">for</span> <span class="var">i</span>, <span class="var">s</span> <span class="kw">in</span> <span class="bi">enumerate</span>(<span class="var">exam</span>):
+    <span class="kw">if</span> <span class="var">i</span> <span class="op">&lt;</span> <span class="nm">2</span>: <span class="kw">continue</span>
+    <span class="var">r</span>.<span class="fn">append</span>(<span class="var">s</span>)
+    <span class="kw">if</span> <span class="bi">len</span>(<span class="var">r</span>) <span class="op">==</span> <span class="nm">4</span>: <span class="kw">break</span>
+<span class="bi">print</span>(<span class="op">*</span><span class="var">r</span>, <span class="var">sep</span><span class="op">=</span><span class="st">', '</span>)</pre></div>
+      <div class="output-block">
+        <span class="output-label">출력</span>
+        <span class="output-value">다, 라, 마, 바</span>
+      </div>
+      <div class="explanation">
+        <div class="trace-box">
+i=0,'가': i<2 → continue
+i=1,'나': i<2 → continue
+i=2,'다': append → r=['다'], len=1≠4
+i=3,'라': append → r=['다','라'], len=2≠4
+i=4,'마': append → r=['다','라','마'], len=3≠4
+i=5,'바': append → r=['다','라','마','바'], len=4==4 → break
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== #31 ===== -->
+  <div class="problem" id="p31">
+    <div class="problem-header" onclick="toggle(this)">
+      <span class="problem-num">#31</span>
+      <span class="problem-title">while + continue — #01과 유사, 다른 구조</span>
+      <div class="problem-tags"><span class="tag tag-loop">while</span><span class="tag tag-loop">continue</span></div>
+      <span class="chevron">▾</span>
+    </div>
+    <div class="problem-body">
+      <div class="code-block"><pre><span class="cm">#31</span>
+<span class="var">star</span> <span class="op">=</span> [<span class="st">'① A'</span>, <span class="st">'② B'</span>, <span class="st">'③ C'</span>, <span class="st">'④ D'</span>, <span class="st">'⑤ E'</span>]
+<span class="var">i</span> <span class="op">=</span> <span class="nm">0</span>
+<span class="kw">while</span> <span class="var">i</span> <span class="op">&lt;</span> <span class="nm">5</span>:
+    <span class="kw">if</span> <span class="var">i</span> <span class="op">!=</span><span class="nm">2</span>:
+        <span class="var">i</span><span class="op">+=</span><span class="nm">1</span>
+        <span class="kw">continue</span>
+    <span class="bi">print</span>(<span class="var">star</span>[<span class="var">i</span>])
+    <span class="var">i</span><span class="op">+=</span><span class="nm">1</span></pre></div>
+      <div class="output-block">
+        <span class="output-label">출력</span>
+        <span class="output-value">③ C</span>
+      </div>
+      <div class="explanation">
+        <div class="trace-box">
+i=0: 0!=2 → i=1, continue
+i=1: 1!=2 → i=2, continue
+i=2: 2!=2? <span class="val">False</span> → print(star[2])='③ C', i=3
+i=3: 3!=2 → i=4, continue
+i=4: 4!=2 → i=5, continue
+i=5: 5<5? False → 반복 종료
+        </div>
+        <div class="concept-box red" style="margin-top:12px;">
+          <div class="concept-header">🔴 while에서 i+=1을 빠뜨리면 무한루프!</div>
+          <div class="concept-body">
+            <code>continue</code> 전에 <code>i+=1</code>을 해야 합니다. 그렇지 않으면 같은 i로 영원히 반복됩니다.<br>
+            <code>for</code>문은 자동으로 다음 값으로 넘어가지만, <code>while</code>은 직접 i를 증가시켜야 합니다.
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== #32 ===== -->
+  <div class="problem" id="p32">
+    <div class="problem-header" onclick="toggle(this)">
+      <span class="problem-num">#32</span>
+      <span class="problem-title">클래스 기초 — __init__, self, 메서드</span>
+      <div class="problem-tags"><span class="tag tag-func">class</span><span class="tag tag-adv">OOP</span></div>
+      <span class="chevron">▾</span>
+    </div>
+    <div class="problem-body">
+      <div class="code-block"><pre><span class="cm">#32</span>
+<span class="kw">class</span> <span class="fn">Student</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(<span class="var">self</span>, <span class="var">name</span>, <span class="var">grade</span>):
+        <span class="var">self</span>.<span class="var">name</span> <span class="op">=</span> <span class="var">name</span>
+        <span class="var">self</span>.<span class="var">grade</span> <span class="op">=</span> <span class="var">grade</span>
+
+    <span class="kw">def</span> <span class="fn">introduce</span>(<span class="var">self</span>):
+        <span class="bi">print</span>(<span class="fstr">f"나는 </span><span class="fvar">{self.grade}</span><span class="fstr">학년 </span><span class="fvar">{self.name}</span><span class="fstr">입니다."</span>)
+
+<span class="var">s</span> <span class="op">=</span> <span class="fn">Student</span>(<span class="st">"호랑이"</span>, <span class="nm">1</span>)
+<span class="var">s</span>.<span class="fn">introduce</span>()</pre></div>
+      <div class="output-block">
+        <span class="output-label">출력</span>
+        <span class="output-value">나는 1학년 호랑이입니다.</span>
+      </div>
+      <div class="explanation">
+        <div class="step-list">
+          <div class="step"><div class="step-num">1</div><div class="step-content"><code>class Student:</code> — Student라는 설계도(틀) 만들기</div></div>
+          <div class="step"><div class="step-num">2</div><div class="step-content"><code>__init__</code>: 객체를 만들 때 자동으로 실행되는 <strong>초기화 메서드</strong></div></div>
+          <div class="step"><div class="step-num">3</div><div class="step-content"><code>self</code>: 만들어진 객체 자기 자신을 가리킴. <code>self.name</code>은 이 객체의 이름 속성</div></div>
+          <div class="step"><div class="step-num">4</div><div class="step-content"><code>Student("호랑이", 1)</code> → __init__ 자동 호출 → s.name="호랑이", s.grade=1</div></div>
+          <div class="step"><div class="step-num">5</div><div class="step-content"><code>s.introduce()</code> → f-string으로 "나는 1학년 호랑이입니다." 출력</div></div>
+        </div>
+        <div class="concept-box purple" style="margin-top:14px;">
+          <div class="concept-header">⚡ 클래스 비유</div>
+          <div class="concept-body">
+            <strong>클래스</strong>는 붕어빵 틀, <strong>객체(인스턴스)</strong>는 실제 붕어빵입니다.<br><br>
+            <div class="trace-box">
+class Student:          <span class="comment"># 틀(설계도)</span>
+    def __init__(self, name, grade):  <span class="comment"># 재료 넣는 방법</span>
+        self.name = name
+        self.grade = grade
+
+s1 = Student("호랑이", 1)  <span class="comment"># 붕어빵 1개</span>
+s2 = Student("사자", 2)    <span class="comment"># 붕어빵 2개 (각자 독립)</span>
+            </div>
+            <br>
+            <code>self</code>는 항상 첫 번째 매개변수로 써야 하지만, 호출할 때는 전달하지 않아도 됩니다.
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- QUICK REFERENCE -->
+  <div style="background:var(--surface); border:1px solid var(--border); border-radius:12px; padding:28px 28px 24px; margin-top:32px;">
+    <h3 style="font-size:16px; font-weight:700; margin-bottom:18px; letter-spacing:-0.02em;">⚡ 고급 개념 빠른 참조표</h3>
+    <table class="mini-table" style="font-size:13px;">
+      <tr><th>개념</th><th>문법</th><th>의미</th><th>등장 문제</th></tr>
+      <tr><td><strong>스타 언패킹</strong></td><td><code>print(*a)</code></td><td>이터러블을 개별 인자로 분리</td><td>#02, #10, #19, #23~</td></tr>
+      <tr><td><strong>리스트 언패킹</strong></td><td><code>[*a, *b]</code></td><td>리스트 안에서 합치기</td><td>#10, #24</td></tr>
+      <tr><td><strong>튜플 언패킹</strong></td><td><code>a, b = (1,2)</code></td><td>여러 변수에 동시 분배</td><td>#07, #28, #29</td></tr>
+      <tr><td><strong>삼항 연산자</strong></td><td><code>A if 조건 else B</code></td><td>한줄 if-else</td><td>#29</td></tr>
+      <tr><td><strong>리스트컴프리헨션</strong></td><td><code>[x for x in ... if ...]</code></td><td>간결한 리스트 생성</td><td>#05,#13,#08...</td></tr>
+      <tr><td><strong>제너레이터식</strong></td><td><code>(x for x in ...)</code></td><td>지연 평가, 메모리 효율</td><td>#02, #04</td></tr>
+      <tr><td><strong>for-else</strong></td><td><code>for ... else ...</code></td><td>break 없이 완주 시 else</td><td>#12</td></tr>
+      <tr><td><strong>슬라이싱</strong></td><td><code>[시작:끝:간격]</code></td><td>부분 추출 / 역순</td><td>#19</td></tr>
+      <tr><td><strong>lambda</strong></td><td><code>lambda x: x+1</code></td><td>이름 없는 1회용 함수</td><td>#06, #15</td></tr>
+      <tr><td><strong>enumerate</strong></td><td><code>for i,v in enumerate(a)</code></td><td>인덱스+값 동시</td><td>#28, #30</td></tr>
+    </table>
+  </div>
+
+</main>
+
+<script>
+  // Toggle problem expand/collapse
+  function toggle(header) {
+    const problem = header.parentElement;
+    problem.classList.toggle('closed');
+    // Sync sidebar
+    const id = problem.id;
+    document.querySelectorAll('.sidebar-item').forEach(el => {
+      el.classList.toggle('active', el.getAttribute('href') === '#'+id);
+    });
+  }
+
+  // Progress bar
+  window.addEventListener('scroll', () => {
+    const doc = document.documentElement;
+    const scrollTop = doc.scrollTop;
+    const scrollHeight = doc.scrollHeight - doc.clientHeight;
+    const progress = scrollHeight > 0 ? Math.round((scrollTop / scrollHeight) * 100) : 0;
+    document.getElementById('progressFill').style.width = progress + '%';
+    document.getElementById('progressText').textContent = progress + '%';
+  });
+
+  // Sidebar active on scroll
+  const problems = document.querySelectorAll('.problem');
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        const id = entry.target.id;
+        document.querySelectorAll('.sidebar-item').forEach(el => {
+          el.classList.toggle('active', el.getAttribute('href') === '#'+id);
+        });
+      }
+    });
+  }, { threshold: 0.3, rootMargin: '-80px 0px -60% 0px' });
+
+  problems.forEach(p => observer.observe(p));
+
+  // Smooth scroll for sidebar links
+  document.querySelectorAll('.sidebar-item').forEach(link => {
+    link.addEventListener('click', (e) => {
+      e.preventDefault();
+      const target = document.querySelector(link.getAttribute('href'));
+      if (target) {
+        if (target.classList.contains('closed')) target.classList.remove('closed');
+        const y = target.getBoundingClientRect().top + window.scrollY - 90;
+        window.scrollTo({ top: y, behavior: 'smooth' });
+      }
+    });
+  });
+</script>
+</body>
+</html>
